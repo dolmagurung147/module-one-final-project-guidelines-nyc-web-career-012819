@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
   has_many :bets
+  has_many :websites, through: :bets
   has_many :games, through: :bets
 
   def make_a_bet(game_id, amount)
