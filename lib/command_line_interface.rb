@@ -1,47 +1,148 @@
+class CommandLineInterface
 
-def welcome
-  puts "                     Welcome to:
-  (                                 (
-)\ )                          )   )\ )                  )
-(()/(                 (     ( /(  (()/(               ( /(
-/(_))  `  )     (    )(    )\())  /(_))   (     (    )\())
-(_))    /(/(     )\  (()\  (_))/  (_))     )\    )\  ((_)\
+  attr_accessor :current_user_name
 
-/ __|  ((_)_\   ((_)  ((_) | |_   | |     ((_)  ((_) | |(_)
- \__ \  | '_ \) / _ \ | '_| |  _|  | |__  / _ \ / _|  | / /
-|___/  | .__/  \___/ |_|    \__|  |____| \___/ \__|  |_\_\
-|_|"
-end
-
-def user_input
-  puts "What team's odds would you like to see?"
-  team_input = gets.chomp
-  team_input
-end
-
-def team_include?
-  user_team = user_input
-  if !Game.all_teams.include?(user_team)
-    puts "Sorry your team is not playing today!! "
-    team_include?
-  else
-    user_team
+  def start
+    welcome
+    @current_user_name = ask_user_for_their_name
+    check_if_user_exists(current_user_name)
   end
-end
 
+  def welcome
+    puts "                     Welcome to:
+    (                                 (
+  )\ )                          )   )\ )                  )
+  (()/(                 (     ( /(  (()/(               ( /(
+  /(_))  `  )     (    )(    )\())  /(_))   (     (    )\())
+  (_))    /(/(     )\  (()\  (_))/  (_))     )\    )\  ((_)\
 
-def get_websites_and_odds_of_the_game(team_name)
-  game = Game.get_game_by_team(team_name)[0]
-  puts "These are the websites that is providing odds for your team: "
-  website_arr = []
-  game.websites.each do |website|
-    website_arr << website.name
-    website_arr << BettingOdd.find_by(website_id: website.id, game_id: game.id).odds
-    website_arr << ""
+  / __|  ((_)_\   ((_)  ((_) | |_   | |     ((_)  ((_) | |(_)
+   \__ \  | '_ \) / _ \ | '_| |  _|  | |__  / _ \ / _|  | / /
+  |___/  | .__/  \___/ |_|    \__|  |____| \___/ \__|  |_\_\
+  |_|"
   end
-  puts "Sportsbooks and their respective odds: "
-  puts ""
-  puts game.teams.join(" VS ")
-  puts ""
-  puts website_arr
+
+
+  def ask_user_for_their_name
+    puts "Enter your user name"
+    name = gets.chomp
+  end
+
+  def check_if_user_exists(current_user_name)
+    if User.all_name.include?(current_user_name)
+      account_holder_menu
+    else
+      puts "Hey #{current_user_name}! Would you like to create an account?\n Yes\n No"
+      ans = gets.chomp.downcase
+      if ans == "yes"
+        puts "How much money would you like to start with?"
+        user_funds = gets.chomp.to_f
+        User.find_or_create_by(name: current_user_name, funds: user_funds)
+        account_holder_menu
+      else
+        print_nonuser_list
+      end
+    end
+  end
+
+  def account_holder_menu
+    user_ins = User.find_by(name: current_user_name)
+    prompt = TTY::Prompt.new
+    menu_choice = prompt.select("What would you like to do?", marker: ">") do |menu|
+       menu.choice "Check out the odds and sportsbooks/Make a bet"
+       menu.choice "Add funds"
+       menu.choice "Check your balance"
+       menu.choice "Delete your account"
+       menu.choice "Contact us"
+      end
+    result = menu_choice
+    if result == "Check out the odds and sportsbooks/Make a bet"
+      team_exists = team_include?
+      lists = Game.get_websites_and_odds_of_the_game(team_exists)
+      puts lists
+      puts "Would you like to make a bet on one of these sites?\n Yes\n No"
+      input = gets.chomp.downcase
+      if input == "yes"
+        puts "How much would you like to risk?"
+        risk_input = gets.chomp.to_f
+        current_game_id = Game.get_game_by_team(team_exists)[0].id
+        # binding.pry
+        user_ins.make_a_bet(current_game_id ,risk_input)
+        user_ins.funds -= risk_input
+        puts "You just placed a bet on #{team_exists}."
+        puts "Your account now has $#{user_ins.funds}"
+        puts "Good luck!!"
+      else
+        account_holder_menu
+      end
+    elsif result == "Add funds"
+      puts "How much would you like to add?"
+      amnt = gets.chomp
+      user_ins.funds += amnt.to_f
+      puts "Your account now has $#{user_ins.funds}."
+    elsif result == "Check your balance"
+      puts "$#{user_ins.funds}"
+    elsif result == "Delete your account"
+      user_ins.destroy
+      puts "We are sad to see you go. Good Bye!"
+    elsif result == "Contact us"
+      puts "Sorry! We are busy making money! Try again later!"
+    end
+  end
+
+
+  def print_nonuser_list
+    prompt = TTY::Prompt.new
+    menu_choice = prompt.select("What would you like to do?", marker: ">") do |menu|
+       menu.choice "Check out the odds and the website"
+       menu.choice "Changed your mind? Create an account?"
+       menu.choice "Contact us"
+      end
+    result = menu_choice
+    if result == "Check out the odds and the website"
+      team_exists = team_include?
+      lists = Game.get_websites_and_odds_of_the_game(team_exists)
+      puts lists
+    elsif result == "Changed your mind? Create an account?"
+      check_if_user_exists(current_user_name)
+    elsif result == "Contact us"
+      puts " Sorry! We are busy making money! Try again later!"
+    end
+  end
+
+  def user_input
+    puts "What team's odds would you like to see?"
+    team_input = gets.chomp
+    team_input
+  end
+  #
+  def team_include?
+    user_team = user_input
+    if !Game.all_teams.include?(user_team)
+      puts "Sorry your team is not playing today!! "
+      team_include?
+    else
+      user_team
+    end
+  end
+
+
 end
+
+# class CommandLineInterface
+#
+#   attr_accessor :current_user_name
+#
+#   def start
+#     welcome
+#     self.current_user_name = ask_user_for_their_name
+#     find_user
+#   end
+#
+#
+#   def find_user
+#     # store the current user in an instance variable
+#     User.find_by(name: self.current_user_name)
+#   end
+#
+# end
