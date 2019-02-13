@@ -79,6 +79,7 @@ class CommandLineInterface
       puts "How much would you like to add?"
       amnt = gets.chomp
       user_ins.funds += amnt.to_f
+      user_ins.save
       puts "Your account now has $#{user_ins.funds}."
     elsif result == "Check your balance"
       puts "$#{user_ins.funds}"
