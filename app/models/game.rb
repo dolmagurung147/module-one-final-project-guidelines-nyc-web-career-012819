@@ -12,4 +12,9 @@ class Game < ActiveRecord::Base
       game.teams
     end.flatten.uniq
   end
+
+  def self.get_game_by_team(team_name)
+    Game.all.where(team1:  team_name) || Game.all.where(team2: team_name)
+  end
+
 end

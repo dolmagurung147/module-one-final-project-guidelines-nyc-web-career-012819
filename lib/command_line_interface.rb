@@ -29,18 +29,19 @@ def team_include?
   end
 end
 
+
 def get_websites_and_odds_of_the_game(team_name)
-
-  # puts BettingOdd.all.where("game_id.team1 = team_name")
-  # binding.pry
-  # .odds website_id.name
-  puts Game.all.find_by(:team1 == team_name || :team2 == team_name).websites.each do |website|
-    puts website.name
+  game = Game.get_game_by_team(team_name)[0]
+  puts "These are the websites that is providing odds for your team: "
+  website_arr = []
+  game.websites.each do |website|
+    website_arr << website.name
+    website_arr << BettingOdd.find_by(website_id: website.id, game_id: game.id).odds
+    website_arr << ""
   end
-  # puts Game.all.find_by(:team1 == team_name || :team2 == team_name).odds
+  puts "Sportsbooks and their respective odds: "
+  puts ""
+  puts game.teams.join(" VS ")
+  puts ""
+  puts website_arr
 end
-
-# find all the odds that have the same game id
-# def get_websites_and_odds_of_the_game(team_name)
-#   Game.all.find_by(:team1 == team_name || :team2 == team_name)
-# end
