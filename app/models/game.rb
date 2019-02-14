@@ -15,7 +15,7 @@ class Game < ActiveRecord::Base
 
   def self.all_games
       prompt = TTY::Prompt.new
-      menu_choice = prompt.select("Lists of the game: ", marker: ">") do |menu|
+      menu_choice = prompt.select("Choose your game: ", marker: ">") do |menu|
         self.all.each do |game|
           menu.choice "#{game.teams.join(" VS ")}"
         end

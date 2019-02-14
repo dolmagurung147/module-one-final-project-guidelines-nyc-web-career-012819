@@ -4,6 +4,7 @@ class CommandLineInterface
 
   def start
     welcome
+    ApiCommunicator.creating_datab
     @current_user_name = ask_user_for_their_name
     check_if_user_exists(current_user_name)
   end
@@ -60,8 +61,8 @@ class CommandLineInterface
     result = menu_choice
 
     if result == "Check out the odds and sportsbooks/Make a bet"
-      choice = Game.all_games
-      lists = Game.get_websites_and_odds_of_the_game(choice)
+      game_choice = Game.all_games
+      lists = Game.get_websites_and_odds_of_the_game(game_choice)
       puts lists
       puts "Would you like to make a bet on one of these sites?\n Yes\n No"
       input = gets.chomp.downcase
@@ -81,11 +82,11 @@ class CommandLineInterface
             puts "Sorry! You do not have enough funds in your account. Please add more."
             account_holder_menu
             else
-              current_game_id = Game.get_game_by_team(team_exists).id
+              current_game_id = Game.get_game_by_team(game_choice).id
               user_ins.make_a_bet(current_game_id ,floated_risk, website_ins_id)
               user_ins.funds -= floated_risk
               user_ins.save
-              puts "You just placed a bet on #{team_exists}."
+              puts "You just placed a bet on #{game_choice}."
               puts "Your account now has $#{user_ins.funds}"
               puts "Good luck!!"
               account_holder_menu
@@ -143,8 +144,7 @@ class CommandLineInterface
     result = menu_choice
 
     if result == "Check out the odds and the website"
-      team_exists = team_include?
-      lists = Game.get_websites_and_odds_of_the_game(team_exists)
+      lists = Game.get_websites_and_odds_of_the_game(choice)
       puts lists
       print_nonuser_list
     elsif result == "Changed your mind? Create an account?"
