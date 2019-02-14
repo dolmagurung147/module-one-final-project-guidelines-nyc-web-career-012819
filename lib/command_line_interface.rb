@@ -4,23 +4,36 @@ class CommandLineInterface
 
   def start
     welcome
-    ApiCommunicator.creating_datab
+    # ApiCommunicator.creating_datab
     @current_user_name = ask_user_for_their_name
     check_if_user_exists(current_user_name)
   end
 
   def welcome
     puts "                     Welcome to:
-    (                                 (
-  )\ )                          )   )\ )                  )
-  (()/(                 (     ( /(  (()/(               ( /(
-  /(_))  `  )     (    )(    )\())  /(_))   (     (    )\())
-  (_))    /(/(     )\  (()\  (_))/  (_))     )\    )\  ((_)\
+              _----_     _________        /\\
+             /      \\  /         \\/\\__///
+            (        \\/          / > /    \\
+             \\        |      --/_>_/    /
+               \\_ ____|          \\/\\_/
+                  /               ///        __
+                 (               // \\      /  \\
+                  \\     \\     ///   \\   /    \\
+                   (      \\  //       \\ /\\ _  \\
+                    \\   ___|///    _   \\/ \\/\\__)
+                     ( / _ //\\    ( \\      /
+                      /_ /// /     \\ \\ _   /
+                      (__)  )\\_    \\   --~
+                      ///--/   \\____\\
+                     //        __)    \\
+                   ///        (________)
+        _________///          ===========
+      //|_____|///
 
-  / __|  ((_)_\   ((_)  ((_) | |_   | |     ((_)  ((_) | |(_)
-   \__ \  | '_ \) / _ \ | '_| |  _|  | |__  / _ \ / _|  | / /
-  |___/  | .__/  \___/ |_|    \__|  |____| \___/ \__|  |_\_\
-  |_|"
+  "
+
+
+  puts "WELCOME TO HOCKEY BETTING SITE!!"
   end
 
 
@@ -51,7 +64,7 @@ class CommandLineInterface
     prompt = TTY::Prompt.new
     menu_choice = prompt.select("What would you like to do?", marker: ">") do |menu|
        menu.choice "Check out the odds and sportsbooks/Make a bet"
-       menu.choice "Add funds"
+       menu.choice "Add / Withdraw funds"
        menu.choice "Check your balance"
        menu.choice "View My Bets"
        menu.choice "Delete your account"
@@ -99,7 +112,7 @@ class CommandLineInterface
         account_holder_menu
       end
 
-    elsif result == "Add funds"
+    elsif result == "Add / Withdraw funds"
       puts "How much would you like to add?"
       amnt = gets.chomp
       user_ins.funds += amnt.to_f
