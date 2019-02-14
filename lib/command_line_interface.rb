@@ -1,39 +1,14 @@
+require_relative "../app/models/art.rb"
+
 class CommandLineInterface
 
   attr_accessor :current_user_name
 
   def start
-    welcome
-    # ApiCommunicator.creating_datab
+    Art.welcome
+    ApiCommunicator.creating_datab
     @current_user_name = ask_user_for_their_name
     check_if_user_exists(current_user_name)
-  end
-
-  def welcome
-    puts "                     Welcome to:
-              _----_     _________        /\\
-             /      \\  /         \\/\\__///
-            (        \\/          / > /    \\
-             \\        |      --/_>_/    /
-               \\_ ____|          \\/\\_/
-                  /               ///        __
-                 (               // \\      /  \\
-                  \\     \\     ///   \\   /    \\
-                   (      \\  //       \\ /\\ _  \\
-                    \\   ___|///    _   \\/ \\/\\__)
-                     ( / _ //\\    ( \\      /
-                      /_ /// /     \\ \\ _   /
-                      (__)  )\\_    \\   --~
-                      ///--/   \\____\\
-                     //        __)    \\
-                   ///        (________)
-        _________///          ===========
-      //|_____|///
-
-  "
-
-
-  puts "WELCOME TO HOCKEY BETTING SITE!!"
   end
 
 
