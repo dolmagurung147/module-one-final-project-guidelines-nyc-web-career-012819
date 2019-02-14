@@ -52,6 +52,7 @@ class CommandLineInterface
        menu.choice "Check out the odds and sportsbooks/Make a bet"
        menu.choice "Add funds"
        menu.choice "Check your balance"
+       menu.choice "View My Bets"
        menu.choice "Delete your account"
        menu.choice "Contact us"
        menu.choice "Logout"
@@ -65,25 +66,38 @@ class CommandLineInterface
       puts "Would you like to make a bet on one of these sites?\n Yes\n No"
       input = gets.chomp.downcase
       if input == "yes"
-        puts "How much would you like to risk?"
-        risk_input = gets.chomp.to_f
-        if risk_input > user_ins.funds
-          puts "Sorry! You do not have enough funds in your account. Please add more."
-          account_holder_menu
+        puts "Choose a website: "
+        website_name = gets.chomp
+        if lists.include?(website_name)
+          website_ins_id = Website.all.where(name: website_name)[0].id
+          puts "How much would you like to risk?"
+          risk_input = gets.chomp
+            if risk_input.to_f == 0.0 
+              puts "Enter a valid amount"
+            account_holder_menu
+          else
+            floated_risk = risk_input.to_f
+            if floated_risk > user_ins.funds
+            puts "Sorry! You do not have enough funds in your account. Please add more."
+            account_holder_menu
+            else
+              current_game_id = Game.get_game_by_team(team_exists).id
+              user_ins.make_a_bet(current_game_id ,floated_risk, website_ins_id)
+              user_ins.funds -= floated_risk
+              user_ins.save
+              puts "You just placed a bet on #{team_exists}."
+              puts "Your account now has $#{user_ins.funds}"
+              puts "Good luck!!"
+              account_holder_menu
+            end
+          end
         else
-          current_game_id = Game.get_game_by_team(team_exists).id
-          # binding.pry
-          user_ins.make_a_bet(current_game_id ,risk_input)
-          user_ins.funds -= risk_input
-          user_ins.save
-          puts "You just placed a bet on #{team_exists}."
-          puts "Your account now has $#{user_ins.funds}"
-          puts "Good luck!!"
-          account_holder_menu
+          puts "Game not available for #{website_name}. \nEnter a valid website."
         end
       else
         account_holder_menu
       end
+
     elsif result == "Add funds"
       puts "How much would you like to add?"
       amnt = gets.chomp
@@ -91,9 +105,21 @@ class CommandLineInterface
       user_ins.save
       puts "Your account now has $#{user_ins.funds}."
       account_holder_menu
+
     elsif result == "Check your balance"
       puts "$#{user_ins.funds}"
       account_holder_menu
+
+    elsif result == "View My Bets"
+      puts "Your Bets: \n"
+      user_ins.bets.each do |bet|
+        puts Game.all.where(id: bet.game_id).all_teams.join(" VS ")
+        puts  "Website: #{Website.all.where(id: bet.website_id)[0].name}"
+        puts BettingOdd.all.where(game_id: bet.game_id, website_id: bet.website_id)[0].odds
+        puts "Risk: $#{bet.amount}\n"
+      end
+      account_holder_menu
+
     elsif result == "Delete your account"
       user_ins.destroy
       puts "We are sad to see you go. Good Bye!"
