@@ -60,8 +60,8 @@ class CommandLineInterface
     result = menu_choice
 
     if result == "Check out the odds and sportsbooks/Make a bet"
-      team_exists = team_include?
-      lists = Game.get_websites_and_odds_of_the_game(team_exists)
+      choice = Game.all_games
+      lists = Game.get_websites_and_odds_of_the_game(choice)
       puts lists
       puts "Would you like to make a bet on one of these sites?\n Yes\n No"
       input = gets.chomp.downcase
@@ -72,7 +72,7 @@ class CommandLineInterface
           website_ins_id = Website.all.where(name: website_name)[0].id
           puts "How much would you like to risk?"
           risk_input = gets.chomp
-            if risk_input.to_f == 0.0 
+            if risk_input.to_f == 0.0
               puts "Enter a valid amount"
             account_holder_menu
           else
@@ -157,22 +157,5 @@ class CommandLineInterface
       puts "Thanks For Visiting!"
     end
   end
-
-  def user_input
-    puts "What team's odds would you like to see?"
-    team_input = gets.chomp
-    team_input
-  end
-
-  def team_include?
-    user_team = user_input
-    if !Game.all_teams.include?(user_team)
-      puts "Sorry your team is not playing today!! "
-      team_include?
-    else
-      user_team
-    end
-  end
-
 
 end

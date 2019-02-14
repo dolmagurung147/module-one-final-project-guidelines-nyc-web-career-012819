@@ -13,20 +13,23 @@ class Game < ActiveRecord::Base
     end.flatten.uniq
   end
 
-  def self.get_game_by_team(team_name)
-    team1_name = Game.all.where(team1: team_name)
-    team2_name = Game.all.where(team2: team_name)
-    # binding.pry
-    if team1_name[0] == nil
-      team2_name[0]
-    else
-      team1_name[0]
+  def self.all_games
+      prompt = TTY::Prompt.new
+      menu_choice = prompt.select("Lists of the game: ", marker: ">") do |menu|
+        self.all.each do |game|
+          menu.choice "#{game.teams.join(" VS ")}"
+        end
+      result = menu_choice
     end
   end
 
-  def self.get_websites_and_odds_of_the_game(team_name)
-    game = Game.get_game_by_team(team_name)
-    # binding.pry
+  def self.get_game_by_team(choice)
+    team_name = choice.split(" VS ")
+    game = Game.all.where(team1: team_name[0], team2: team_name[1])[0]
+  end
+
+  def self.get_websites_and_odds_of_the_game(choice)
+    game = Game.get_game_by_team(choice)
     puts "These are the websites that is providing odds for your team: "
 
     website_arr = []
