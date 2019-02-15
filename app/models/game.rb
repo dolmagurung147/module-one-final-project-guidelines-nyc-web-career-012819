@@ -14,8 +14,13 @@ class Game < ActiveRecord::Base
   end
 
   def self.all_games
+    Whirly.start do
+      Whirly.status = "Loading games, one moment..."
+      sleep 4
+    end
+      system 'clear'
       prompt = TTY::Prompt.new
-      menu_choice = prompt.select("Choose your game: ", marker: ">") do |menu|
+      menu_choice = prompt.select("Choose your game: ", marker: "💰") do |menu|
         self.all.each do |game|
           menu.choice "#{game.teams.join(" VS ")}"
         end

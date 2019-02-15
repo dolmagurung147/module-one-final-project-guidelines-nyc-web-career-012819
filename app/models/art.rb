@@ -1,7 +1,7 @@
 class Art
 
   def self.welcome
-          puts "                                         Welcome to:
+          text = "                                         Welcome to:
                                 _----_     _________     /\\
                                /      \\  /         \\/\\__///
                               (        \\/          / > /  \\
@@ -35,7 +35,13 @@ class Art
 
 
 "
+text.each_char do |c|
+  print c
+  sleep (0.002)
+end
   end
+
+  
 
 
 end
