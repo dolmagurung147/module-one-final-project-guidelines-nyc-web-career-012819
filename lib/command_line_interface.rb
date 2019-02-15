@@ -6,7 +6,7 @@ class CommandLineInterface
 
   def start
     Art.welcome
-    # ApiCommunicator.creating_datab
+    ApiCommunicator.creating_datab
     @current_user_name = ask_user_for_their_name
     check_if_user_exists(current_user_name)
   end
