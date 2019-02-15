@@ -6,7 +6,7 @@ class CommandLineInterface
 
   def start
     Art.welcome
-    ApiCommunicator.creating_datab
+    # ApiCommunicator.creating_datab
     @current_user_name = ask_user_for_their_name
     check_if_user_exists(current_user_name)
   end
@@ -112,9 +112,11 @@ class CommandLineInterface
     elsif result == "Delete your account"
       user_ins.destroy
       puts "We are sad to see you go. Good Bye!"
+
     elsif result == "Contact us"
       puts "Sorry! We are busy making money! Try again later!"
       account_holder_menu
+
     elsif result == "Logout"
       puts "Come back soon!"
     end
@@ -132,12 +134,13 @@ class CommandLineInterface
     result = menu_choice
 
     if result == "Check out the odds and the website"
-      lists = Game.get_websites_and_odds_of_the_game(choice)
+      game_choice = Game.all_games
+      lists = Game.get_websites_and_odds_of_the_game(game_choice)
       puts lists
       print_nonuser_list
     elsif result == "Changed your mind? Create an account?"
       check_if_user_exists(current_user_name)
-      print_nonuser_list
+      # print_nonuser_list
     elsif result == "Contact us"
       puts " Sorry! We are busy making money! Try again later!"
       print_nonuser_list

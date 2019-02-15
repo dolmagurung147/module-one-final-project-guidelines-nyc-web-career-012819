@@ -7,6 +7,4 @@ gem "pry"
 gem "require_all"
 gem "tty-prompt", "~> 0.18.1"
 gem 'rest-client'
-# gem 'rmagick', '~> 2.15'
-# gem 'catpix'
-# gem "mini_magick", "~> 3.4"
+# gem 'dotenv'
